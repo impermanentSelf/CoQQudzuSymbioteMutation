@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<factions Load="Merge">
+    <faction Name="Vines" Load="Merge">
+        <partreputation About="QudzuSymbiote" Value="300" />
+    </faction>
+</faction>
