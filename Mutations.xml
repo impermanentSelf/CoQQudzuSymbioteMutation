@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<mutations>
+	<category Name="Physical">
+		<mutation Name="Qudzu Symbiote" Cost="1" MaxSelected="1" Class="QudzuSymbiote" Tile="Creatures/sw_qudzu.bmp"></mutation>
+	</category>
+</mutations>

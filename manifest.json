@@ -1,0 +1,9 @@
+{
+    "id": "qudzu_symbiote_mutation",
+    "title": "Qudzu Symbiote Mutation",
+    "description": "A mutation that makes the player a qudzu symbiote",
+    "version": "1.0.0",
+    "author": "impermanentSelf",
+    "tags": "Mutation",
+    "PreviewImage": "preview.png"
+}
