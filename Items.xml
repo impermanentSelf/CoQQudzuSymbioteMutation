@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<objects>
+  <object Name="Rustit Spray" Inherits="Item">
+    <part Name="Examiner" Complexity="2" Alternate="UnknownBottle" />
+    <part Name="Render" Tile="items/sw_spray.bmp" DisplayName="{{r|Rust-It}} spray foam" ColorString="&amp;r" DetailColor="k" RenderString="012" RenderLayer="5" />
+    <part Name="Physics" Category="Applicators" />
+    <part Name="Description" Short="It seems to be some rust in a bottle." />
+    <part Name="Commerce" Value="10" />
+    <part Name="Applicator" />
+    <part Name="RustitSpray" />
+	  <tag Name="EquipSound" Value="sfx_equip_material_sprayBottle" />
+    <tag Name="Gift" Value="*noinherit" />
+    <tag Name="Tier" Value="2" />
+    <stag Name="Tool" />
+  </object>
+</objects>
