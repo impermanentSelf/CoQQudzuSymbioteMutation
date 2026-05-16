@@ -1,9 +1,9 @@
 {
     "id": "qudzu_symbiote_mutation",
-    "title": "Qudzu Symbiote Mutation",
-    "description": "A mutation that makes the player a qudzu symbiote",
-    "version": "1.0.0",
+    "title": "{{r|Qudzu}} Symbiote Mutation",
+    "description": "A mutation that makes the player a qudzu symbiote, also Rust-It Spray Foam",
+    "version": "1.1.1",
     "author": "impermanentSelf",
-    "tags": "Mutation",
+    "tags": "Mutation,Item",
     "PreviewImage": "preview.png"
 }

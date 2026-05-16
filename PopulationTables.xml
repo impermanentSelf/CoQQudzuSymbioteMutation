@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<populations Load="Merge">
+  <population Name="Meds 3">
+    <group Name="Items">
+      <object Weight="5" Number="1" Blueprint="Rustit Spray" />
+    </group>
+  </population>
+
+
+  <population Name="Utility 2">
+    <group Name="Items">
+      <object Weight="10" Number="1" Blueprint="Rustit Spray" />
+    </group>
+  </population>
+</populations>

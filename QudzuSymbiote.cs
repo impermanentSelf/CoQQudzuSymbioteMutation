@@ -9,7 +9,7 @@ namespace XRL.World.Parts.Mutation {
         }
 
         public override string GetDescription() {
-            return string.Concat("You are a Qudzu Symbiote\n\n",
+            return string.Concat("You are a {{r|Qudzu}} Symbiote\n\n",
                                  "+300 reputation with {{w|vines}}\n",
                                  "15% chance to {{r|rust}} items on hit");
         }
