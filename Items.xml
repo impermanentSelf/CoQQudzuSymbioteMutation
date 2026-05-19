@@ -4,7 +4,7 @@
     <part Name="Examiner" Complexity="2" Alternate="UnknownBottle" />
     <part Name="Render" Tile="items/sw_spray.bmp" DisplayName="{{r|Rust-It}} spray foam" ColorString="&amp;r" DetailColor="k" RenderString="012" RenderLayer="5" />
     <part Name="Physics" Category="Applicators" />
-    <part Name="Description" Short="It seems to be some rust in a bottle." />
+    <part Name="Description" Short="A mad genius has taken a bottle of Fix-It spray foam and replaced all of the restorative gel with pure Qudzu extract." />
     <part Name="Commerce" Value="10" />
     <part Name="Applicator" />
     <part Name="RustitSpray" />
@@ -12,5 +12,13 @@
     <tag Name="Gift" Value="*noinherit" />
     <tag Name="Tier" Value="2" />
     <stag Name="Tool" />
+  </object>
+
+  <object Name="Gentling Collar" Load="Merge">
+    <tag Name="RustSprayBreakable" />
+  </object>
+
+  <object Name="Gentling Mask" Load="Merge">
+    <tag Name="RustSprayBreakable" />
   </object>
 </objects>

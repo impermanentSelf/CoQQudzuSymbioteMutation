@@ -16,14 +16,34 @@ namespace XRL.World.Parts {
 
         public override bool WantEvent(int ID, int cascade) {
             if (!base.WantEvent(ID, cascade)) {
-                return ID == InventoryActionEvent.ID;
+                return ID == InventoryActionEvent.ID || ID == GetInventoryActionsAlwaysEvent.ID;
             }
 
             return true;
         }
 
+        public override bool HandleEvent(GetInventoryActionsAlwaysEvent E) {
+
+            if (!E.Object.IsBroken() && !E.Object.IsRusted()) {
+                int @default = 0;
+
+                if (E.Object.Equipped == E.Actor || E.Object.InInventory == E.Actor) {
+                    if (E.Object.IsImportant()) {
+                        @default = -1;
+                    }
+                }
+
+                E.AddAction("Apply", "apply", "Apply", null, 'a', FireOnActor: false, @default);
+                if (!E.Actor.OnWorldMap()) {
+                    E.AddAction("Apply To", "apply to", "ApplyTo", null, 'a', FireOnActor: false, -2);
+                }
+            }
+
+            return base.HandleEvent(E);
+        }
+
         public override bool HandleEvent(InventoryActionEvent E) {
-            if (E.Command == "Apply") {
+            if (E.Command == "Apply" || E.Command == "ApplyTo") {
                 if (!E.Actor.CheckFrozen(Telepathic: false, Telekinetic: true)) {
                     return false;
                 }
@@ -33,19 +53,46 @@ namespace XRL.World.Parts {
                     return false;
                 }
 
-                List<GameObject> inventoryAndEquipment = E.Actor.GetInventoryAndEquipment();
-                ProcessCellForTargets(E.Actor, E.Actor.CurrentCell, inventoryAndEquipment);
-                foreach (Cell localAdjacentCell in E.Actor.CurrentCell.GetLocalAdjacentCells()) {
-                    ProcessCellForTargets(E.Actor, localAdjacentCell, inventoryAndEquipment);
+                //GameObject.GetEquippedObjects() get just the equipment
+
+                List<GameObject> inventoryAndEquipment = new List<GameObject>();
+
+                if (E.Command == "ApplyTo") {
+                    if (E.Actor.OnWorldMap()) {
+                        return E.Actor.Fail("You cannot do that on the world map.");
+                    }
+
+                    Cell cell = PickDirection(ForAttack: false, POV: E.Actor, Label: "Apply " + E.Item.GetDisplayName(int.MaxValue, null, null, AsIfKnown: false, Single: true));
+                    ProcessCellForTargets(E.Actor, cell, inventoryAndEquipment);
+                }
+
+                else {
+                    foreach (GameObject Object in E.Actor.GetInventoryAndEquipment()) {
+                        if (CanApply(Object)) {
+
+                            inventoryAndEquipment.Add(Object);
+                        }
+                    }
+
+                    if (CanApply(E.Actor)) {
+                        inventoryAndEquipment.Add(E.Actor);
+                    }
+                }
+
+                if (inventoryAndEquipment.Count <= 0) {
+                    if (E.Actor.IsPlayer()) {
+                        if (E.Command == "ApplyTo") {
+                            Popup.Show("There is nothing there you can {{r|rust}}.");
+                        } else {
+                            Popup.Show("There is nothing you can {{r|rust}}.");
+                        }
+                        return false;
+
+                    }
                 }
 
                 GameObject gameObject = PickItem.ShowPicker(inventoryAndEquipment, null, PickItem.PickItemDialogStyle.SelectItemDialog, E.Actor, null, null, null, PreserveOrder: false, null, ShowContext: true);
                 if (gameObject == null) {
-                    return false;
-                }
-
-                if (!gameObject.HasPart<Metal>() || !gameObject.FireEvent("ApplyRusted")) {
-                    Popup.Show("This item cannot be {{r|rusted}}");
                     return false;
                 }
 
@@ -55,14 +102,6 @@ namespace XRL.World.Parts {
                     if (E.Actor.IsPlayer()) {
                         Popup.Show("Pure {{r|rust} coats " + gameObject.t() + ".");
                     }
-                }
-
-                else if (matterPhase == 2) {
-                    if (E.Actor.IsPlayer()) {
-                        Popup.Show("Some {{r|rust}} mixes in with " + gameObject.t() + ".");
-                    }
-
-                    gameObject.LiquidVolume?.MixWith(new LiquidVolume("salt", 1));
                 }
 
                 else {
@@ -79,7 +118,23 @@ namespace XRL.World.Parts {
                         ParentObject.MakeUnderstood(out Message);
                     }
 
-                    gameObject.ApplyEffect(new Rusted());
+                    bool cursed = gameObject.HasPart<Cursed>();
+
+                    if (cursed) {
+                        gameObject.RemovePart<Cursed>(); //need to trick the game into successfully removing Gentling Cones/Masks when they break
+                    }
+
+                    if (gameObject.HasTagOrProperty("RustSprayBreakable")) {
+                        gameObject.ApplyEffect(new Broken());
+                    }
+
+                    else {
+                        gameObject.ApplyEffect(new Rusted());
+                    }
+
+                    if (cursed) {
+                        gameObject.RequirePart<Cursed>();
+                    }
                 }
                 ParentObject.Destroy();
                 if (!Message.IsNullOrEmpty()) {
@@ -88,6 +143,10 @@ namespace XRL.World.Parts {
             }
 
             return base.HandleEvent(E);
+        }
+
+        private bool CanApply(GameObject Object) {
+            return (Object.HasPart<Metal>() || Object.HasTagOrProperty("RustSprayBreakable"));
         }
 
         private void ProcessCellForTargets(GameObject Actor, Cell C, List<GameObject> Objects) {
@@ -112,7 +171,18 @@ namespace XRL.World.Parts {
                 GameObject gameObject = list2[i];
                 Physics physics = gameObject.Physics;
                 if (physics != null && physics.IsReal && IComponent<GameObject>.Visible(gameObject) && gameObject.Render != null && gameObject.Render.RenderLayer > 0 && !Objects.Contains(gameObject) && gameObject != ParentObject) {
-                    Objects.Add(gameObject);
+                    if (CanApply(gameObject)) {
+                        Objects.Add(gameObject);
+                    }
+
+                    if (gameObject.Body != null) {
+                        foreach (GameObject equippedObject in gameObject.GetEquippedObjects()) {
+                            if (CanApply(equippedObject)) {
+                                Objects.Add(equippedObject);
+                            }
+                        }
+
+                    }
                 }
             }
         }
